@@ -1,0 +1,314 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Freedom 104.1 — Live Radio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #000;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #111;
+      border-bottom: 1px solid #222;
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo img {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      animation: spinLogo 5s linear infinite;
+    }
+
+    @keyframes spinLogo {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .logo h1 {
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+
+    /* Hamburger Button */
+    .hamburger {
+      width: 30px;
+      height: 25px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 100%;
+      height: 4px;
+      background-color: #fff;
+      border-radius: 5px;
+      transition: 0.3s;
+    }
+
+    /* Sidebar Menu */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: #111;
+      transition: left 0.3s ease;
+      z-index: 999;
+      padding-top: 80px;
+    }
+
+    .sidebar.active {
+      left: 0;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #ccc;
+      text-decoration: none;
+      padding: 15px 25px;
+      border-bottom: 1px solid #222;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      background: #222;
+      color: #ff6600;
+    }
+
+    /* Main Content */
+    main {
+      text-align: center;
+      padding-top: 120px;
+      padding-bottom: 50px;
+    }
+
+    img.station-logo {
+      width: 160px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 0 20px rgba(255, 102, 0, 0.6);
+      margin-bottom: 20px;
+      animation: floatLogo 3s ease-in-out infinite;
+    }
+
+    @keyframes floatLogo {
+      0%,100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 10px;
+    }
+
+    p.tagline {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 25px;
+    }
+
+    .player-box {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 15px;
+      padding: 20px 30px;
+      display: inline-block;
+      box-shadow: 0 0 15px rgba(255, 102, 0, 0.2);
+    }
+
+    audio {
+      width: 250px;
+      margin-top: 10px;
+      filter: drop-shadow(0 0 5px #ff6600);
+    }
+
+    .now-playing {
+      margin-top: 15px;
+      font-size: 0.9rem;
+      color: #ff9900;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.8; }
+      50% { opacity: 0.4; }
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.8rem;
+      color: #666;
+      padding: 20px 0;
+    }
+
+    @media (max-width: 480px) {
+      h2 { font-size: 1.3rem; }
+      img.station-logo { width: 130px; }
+      audio { width: 200px; }
+    }
+
+    /* Welcome Overlay */
+    .welcome-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle, #111 40%, #000 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 2000;
+      transition: opacity 1s ease;
+    }
+
+    .welcome-overlay img {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      box-shadow: 0 0 40px rgba(255, 102, 0, 0.8);
+      animation: pulseGlow 2s infinite;
+      cursor: pointer;
+    }
+
+    .welcome-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 40px rgba(255, 102, 0, 0.8); }
+      50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(255, 153, 0, 1); }
+    }
+
+    .welcome-text {
+      margin-top: 20px;
+      font-size: 1.1rem;
+      color: #ff9900;
+      letter-spacing: 1px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Welcome Screen -->
+  <div class="welcome-overlay" id="welcomeScreen">
+    <img src="freedom.png" alt="Welcome Logo" id="welcomeLogo">
+    <div class="welcome-text">Tap to Start Freedom 104.1 🎧</div>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <a href="#">🏠 Home</a>
+    <a href="#">ℹ️ About</a>
+    <a href="#">📞 Contact</a>
+  </div>
+
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="freedom.png" alt="Freedom 104.1">
+      <h1>Freedom 104.1 FM</h1>
+    </div>
+    <div class="hamburger" id="menuBtn">
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </header>
+
+  <!-- Main Section -->
+  <main>
+    <img src="freedom.png" alt="Freedom 104.1" class="station-logo">
+    <h2>Freedom 104.1 — Live Radio</h2>
+    <p class="tagline">Broadcasting 24/7 from Arenza Broadcasting Services</p>
+
+    <div class="player-box">
+      <audio id="radioPlayer" controls>
+        <source src="http://10.1.0.29:8000/stream" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      <div id="nowPlaying" class="now-playing">🎶 Loading track info...</div>
+    </div>
+  </main>
+
+  <footer>
+    © 2025 Freedom 104.1 — Powered by Icecast & XAMPP
+  </footer>
+
+  <script>
+    // Sidebar Toggle
+    const menuBtn = document.getElementById('menuBtn');
+    const sidebar = document.getElementById('sidebar');
+    menuBtn.addEventListener('click', () => sidebar.classList.toggle('active'));
+
+    // Player and Welcome Screen
+    const player = document.getElementById('radioPlayer');
+    const welcomeScreen = document.getElementById('welcomeScreen');
+    const welcomeLogo = document.getElementById('welcomeLogo');
+
+    welcomeLogo.addEventListener('click', () => {
+      player.play();
+      welcomeScreen.classList.add('fade-out');
+      setTimeout(() => welcomeScreen.style.display = 'none', 1000);
+    });
+
+    // Auto reconnect if stream drops
+    player.volume = 0.8;
+    player.addEventListener('error', () => {
+      setTimeout(() => {
+        player.load();
+        player.play();
+      }, 5000);
+    });
+
+    // Fetch Now Playing info from Icecast
+    async function fetchNowPlaying() {
+      try {
+        const res = await fetch('http://localhost:8000/status-json.xsl');
+        const data = await res.json();
+        const mount = data.icestats.source;
+        let title = "🎵 Live Stream";
+        if (Array.isArray(mount)) {
+          title = mount[0].title || title;
+        } else if (mount && mount.title) {
+          title = mount.title;
+        }
+        document.getElementById("nowPlaying").innerText = "🎶 " + title;
+      } catch {
+        document.getElementById("nowPlaying").innerText = "🎵 Streaming...";
+      }
+    }
+
+    fetchNowPlaying();
+    setInterval(fetchNowPlaying, 10000);
+  </script>
+</body>
+</html>
